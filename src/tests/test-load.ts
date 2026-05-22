@@ -1,5 +1,5 @@
 import { extractGraph } from "../extract-graph";
-import { loadGraph } from "../load";
+import { loadGraph } from "../load-graph";
 import { driver } from "../driver";
 import { createConstraints } from "../create-constraints";
 

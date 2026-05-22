@@ -24,4 +24,13 @@ export const ALLOWED_REL_TYPES = new Set([
   "DEVELOPED",
   "PARTICIPATED_IN",
   "RELATED_TO",
+  "RESULT_OF",
+  "ALLOWS",
+  "RESULTS_IN",
+  "ENABLES",
+  "FACILITATES",
+  "MENTIONED_IN",
+  "USED_TERM",
+  "PROCESSED_BY",
+  "EMBODIED_BY",
 ]);
