@@ -4,7 +4,7 @@ import { NODE_LABELS } from "./labels";
 export { NODE_LABELS } from "./labels";
 export type { NodeLabel } from "./labels";
 
-async function createConstraints() {
+export async function createConstraints() {
   const session = driver.session();
   try {
     for (const label of NODE_LABELS) {
@@ -18,6 +18,3 @@ async function createConstraints() {
     await session.close();
   }
 }
-
-await createConstraints();
-await driver.close();

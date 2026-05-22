@@ -4,8 +4,6 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "connect": "dotenv tsx src/connect.ts",
-    "ingest:schema": "dotenv tsx src/schema.ts",
     "lint": "eslint src",
     "format": "prettier --write src",
     "test:extract": "dotenv tsx src/tests/test-extract.ts",

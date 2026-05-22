@@ -1,24 +1,6 @@
 import { driver } from "./driver";
-import { NODE_LABELS } from "./labels";
-import type { ExtractionResult } from "./extract";
-
-// Relationship types the extractor is expected to produce.
-// Cypher cannot parameterise relationship types ([r:$type] is a parse error),
-// so we build the type into the query string — but only after confirming it's
-// on this allowlist, which prevents injection via a rogue model response.
-const ALLOWED_REL_TYPES = new Set([
-  "INFLUENCED",
-  "CREATED_BY",
-  "PART_OF",
-  "WORKED_AT",
-  "WROTE",
-  "INTRODUCED",
-  "DEVELOPED",
-  "PARTICIPATED_IN",
-  "RELATED_TO",
-]);
-
-const ALLOWED_LABELS = new Set<string>(NODE_LABELS);
+import { ALLOWED_LABELS, ALLOWED_REL_TYPES } from "./labels";
+import type { ExtractionResult } from "./extract-graph";
 
 export async function loadGraph(result: ExtractionResult): Promise<void> {
   const session = driver.session();

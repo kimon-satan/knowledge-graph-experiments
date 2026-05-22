@@ -1,4 +1,4 @@
-import { extractGraph } from "../extract";
+import { extractGraph } from "../extract-graph";
 
 const text = `Alan Turing was a mathematician who developed the Turing machine.
 He worked at Bletchley Park during World War II and influenced computer science greatly.
