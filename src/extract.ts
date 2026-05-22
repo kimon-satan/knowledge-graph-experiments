@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { NODE_LABELS, type NodeLabel } from "./schema";
+import { NODE_LABELS, type NodeLabel } from "./labels";
 
 const client = new OpenAI();
 

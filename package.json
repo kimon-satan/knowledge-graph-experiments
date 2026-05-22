@@ -7,7 +7,9 @@
     "connect": "dotenv tsx src/connect.ts",
     "ingest:schema": "dotenv tsx src/schema.ts",
     "lint": "eslint src",
-    "format": "prettier --write src"
+    "format": "prettier --write src",
+    "test:extract": "dotenv tsx src/tests/test-extract.ts",
+    "test:load": "dotenv tsx src/tests/test-load.ts"
   },
   "keywords": [],
   "author": "",

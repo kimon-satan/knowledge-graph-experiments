@@ -1,14 +1,8 @@
 import { driver } from "./driver";
+import { NODE_LABELS } from "./labels";
 
-// Every label the extractor is allowed to use — also imported by the extraction prompt.
-export const NODE_LABELS = [
-  "Concept",
-  "Person",
-  "Organisation",
-  "Work",
-  "Event",
-] as const;
-export type NodeLabel = (typeof NODE_LABELS)[number];
+export { NODE_LABELS } from "./labels";
+export type { NodeLabel } from "./labels";
 
 async function createConstraints() {
   const session = driver.session();
@@ -22,8 +16,8 @@ async function createConstraints() {
     }
   } finally {
     await session.close();
-    await driver.close();
   }
 }
 
 await createConstraints();
+await driver.close();
