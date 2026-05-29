@@ -8,9 +8,10 @@ if (!filePath) {
   process.exit(1);
 }
 
-const { paragraphs } = JSON.parse(readFileSync(filePath, "utf8")) as {
-  paragraphs: Array<{ id: string; text: string }>;
-};
+const paragraphs = JSON.parse(readFileSync(filePath, "utf8")) as Array<{
+  id: string;
+  text: string;
+}>;
 
 await ingestParagraphs(paragraphs);
 await driver.close();

@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { NODE_LABELS, type NodeLabel } from "./labels";
+import { NODE_LABELS, type NodeLabel, REL_TYPES, type RelType } from "./labels";
 
 const client = new OpenAI();
 
@@ -13,7 +13,7 @@ export type Entity = {
 export type Relationship = {
   fromId: string;
   toId: string;
-  type: string;
+  type: RelType;
 };
 
 export type ExtractionResult = {
@@ -32,11 +32,12 @@ function normaliseId(label: string, name: string): string {
 const SYSTEM_PROMPT = `You are a knowledge graph extractor. Extract entities and relationships from the text.
 
 Allowed entity labels: ${NODE_LABELS.join(", ")}
+Allowed relationship types: ${REL_TYPES.join(", ")}
 
 Rules:
 - Each entity id must be: <label_lowercase>_<name_as_snake_case>  e.g. "Alan Turing" → "person_alan_turing"
 - Only use the allowed labels listed above
-- Relationship types must be UPPER_SNAKE_CASE  e.g. INFLUENCED, PART_OF, CREATED_BY
+- Only use the allowed relationship types listed above
 - Only extract entities and relationships clearly supported by the text
 - If an entity is mentioned multiple times, include it once`;
 
@@ -64,7 +65,7 @@ const RESPONSE_SCHEMA = {
         properties: {
           from_id: { type: "string" },
           to_id: { type: "string" },
-          type: { type: "string" },
+          type: { type: "string", enum: [...REL_TYPES] },
         },
         required: ["from_id", "to_id", "type"],
         additionalProperties: false,
@@ -106,7 +107,7 @@ export async function extractGraph(text: string): Promise<ExtractionResult> {
   const relationships: Relationship[] = raw.relationships.map((r) => ({
     fromId: idMap.get(r.from_id) ?? r.from_id,
     toId: idMap.get(r.to_id) ?? r.to_id,
-    type: r.type,
+    type: r.type as RelType,
   }));
 
   return { entities, relationships };

@@ -14,8 +14,9 @@ export const ALLOWED_LABELS = new Set<string>(NODE_LABELS);
 // Cypher cannot parameterise relationship types ([r:$type] is a parse error),
 // so we build the type into the query string — but only after confirming it's
 // on this allowlist, which prevents injection via a rogue model response.
-export const ALLOWED_REL_TYPES = new Set([
-  "INFLUENCED",
+export const REL_TYPES = [
+  "INFLUENCES",
+  "AFFECTS",
   "CREATED_BY",
   "PART_OF",
   "WORKED_AT",
@@ -33,4 +34,16 @@ export const ALLOWED_REL_TYPES = new Set([
   "USED_TERM",
   "PROCESSED_BY",
   "EMBODIED_BY",
-]);
+  "CONTAINS",
+  "COMPOSED_OF",
+  "HAS_PROPERTY",
+  "WITHOUT_PROPERTY",
+  "SIMILAR_TO",
+  "TYPE_OF",
+  "ANALOGOUS_TO",
+  "EXAMPLE_OF",
+] as const;
+
+export type RelType = (typeof REL_TYPES)[number];
+
+export const ALLOWED_REL_TYPES = new Set<string>(REL_TYPES);
