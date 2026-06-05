@@ -1,9 +1,9 @@
 export const NODE_LABELS = [
-  "Concept",
+  "Topic",
   "Person",
-  "Organisation",
-  "Work",
-  "Event",
+  "System",
+  "Property",
+  "Paragraph",
 ] as const;
 
 export type NodeLabel = (typeof NODE_LABELS)[number];
@@ -31,6 +31,7 @@ export const REL_TYPES = [
   "TYPE_OF",
   "ANALOGOUS_TO",
   "EXAMPLE_OF",
+  "HAS_ENTITY",
 ] as const;
 
 export type RelType = (typeof REL_TYPES)[number];
