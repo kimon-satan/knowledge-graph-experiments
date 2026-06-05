@@ -12,11 +12,13 @@ export async function loadGraph(result: ExtractionResult): Promise<void> {
       }
       // MERGE matches on the unique id. ON CREATE SET only fires for new nodes,
       // so re-running the same data won't overwrite manual edits to existing nodes.
-      await session.run(
+      const entityResult = await session.run(
         `MERGE (n:${entity.label} {id: $id})
          ON CREATE SET n.name = $name, n.description = $description`,
         { id: entity.id, name: entity.name, description: entity.description },
       );
+      const wasCreated = entityResult.summary.counters.updates().nodesCreated > 0;
+      console.log(`  ${wasCreated ? "CREATED" : "matched"} [${entity.label}] ${entity.name}`);
     }
 
     for (const rel of result.relationships) {

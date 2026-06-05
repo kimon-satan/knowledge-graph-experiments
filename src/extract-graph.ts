@@ -29,16 +29,41 @@ function normaliseId(label: string, name: string): string {
   return `${label.toLowerCase()}_${slugify(name)}`;
 }
 
-const SYSTEM_PROMPT = `You are a knowledge graph extractor. Extract entities and relationships from the text.
+const SYSTEM_PROMPT = `You are a knowledge graph extractor for educational content. Extract a DENSE graph — a typical paragraph should yield 8–15 entities and 10–20 relationships.
 
 Allowed entity labels: ${NODE_LABELS.join(", ")}
 Allowed relationship types: ${REL_TYPES.join(", ")}
 
-Rules:
-- Each entity id must be: <label_lowercase>_<name_as_snake_case>  e.g. "Alan Turing" → "person_alan_turing"
-- Only use the allowed labels listed above
-- Only use the allowed relationship types listed above
-- Only extract entities and relationships clearly supported by the text
+ID format: <label_lowercase>_<name_as_snake_case>  e.g. "Open-ended interview" → concept_open_ended_interview
+
+== WHAT TO EXTRACT ==
+
+Extract EVERY concept that is named or clearly implied. Be thorough with:
+- Technical terms and methods (e.g. "probing", "open question")
+- Roles and participants (e.g. "interviewer", "interviewee")
+- Properties and qualities used to describe things (e.g. "exploratory", "depth")
+- Implied contrasts: if the text says "unstructured", also extract "structured interview" as an implied concept
+
+== EXAMPLE ==
+
+Text: "Semi-structured interviews use a topic guide rather than a fixed script, giving the researcher flexibility to probe unexpected responses."
+
+Entities (8): semi-structured interview, topic guide, fixed script, researcher, flexibility, probing, unexpected response, structured interview [implied contrast]
+Relationships (9):
+- semi-structured interview USES topic guide  →  PART_OF
+- semi-structured interview RELATED_TO structured interview
+- semi-structured interview RELATED_TO fixed script
+- semi-structured interview WITHOUT_PROPERTY fixed script
+- semi-structured interview HAS_PROPERTY flexibility
+- semi-structured interview ENABLES probing
+- probing FACILITATES unexpected response
+- researcher PARTICIPATED_IN semi-structured interview
+- topic guide SIMILAR_TO fixed script
+
+== RELATIONSHIP RULES ==
+- Extract ALL relationships — every meaningful connection between entities you found
+- A single sentence typically yields 3–5 relationships
+- Use TYPE_OF, PART_OF, HAS_PROPERTY, WITHOUT_PROPERTY, SIMILAR_TO, RELATED_TO liberally
 - If an entity is mentioned multiple times, include it once`;
 
 const RESPONSE_SCHEMA = {
@@ -79,6 +104,7 @@ const RESPONSE_SCHEMA = {
 export async function extractGraph(text: string): Promise<ExtractionResult> {
   const response = await client.chat.completions.create({
     model: "gpt-4o",
+    temperature: 0.3,
     response_format: {
       type: "json_schema",
       json_schema: { name: "knowledge_graph", strict: true, schema: RESPONSE_SCHEMA },
