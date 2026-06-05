@@ -6,9 +6,10 @@
   "scripts": {
     "lint": "eslint src",
     "format": "prettier --write src",
-    "test:extract": "dotenv tsx src/tests/test-extract.ts",
-    "test:load": "dotenv tsx src/tests/test-load.ts",
-    "ingest": "dotenv tsx src/tests/test-ingest.ts"
+    "test:extract": "dotenv tsx src/tests/test-extract-graph.ts",
+    "test:load": "dotenv tsx src/tests/test-load-graph.ts",
+    "test:ingest": "dotenv tsx src/tests/test-ingest-paragraph.ts",
+    "kg-cli": "dotenv tsx src/cli/kg-cli.ts"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.7.0",
+    "@types/yargs": "^17.0.35",
     "dotenv-cli": "^11.0.0",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
@@ -32,6 +34,7 @@
   },
   "dependencies": {
     "neo4j-driver": "^6.0.1",
-    "openai": "^6.37.0"
+    "openai": "^6.37.0",
+    "yargs": "^18.0.0"
   }
 }
