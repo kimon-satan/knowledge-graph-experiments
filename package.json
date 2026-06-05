@@ -9,7 +9,8 @@
     "test:extract": "dotenv tsx src/tests/test-extract-graph.ts",
     "test:load": "dotenv tsx src/tests/test-load-graph.ts",
     "test:ingest": "dotenv tsx src/tests/test-ingest-paragraph.ts",
-    "kg-cli": "dotenv tsx src/cli/kg-cli.ts"
+    "kg-cli": "dotenv tsx src/cli/kg-cli.ts",
+    "clear-graph": "dotenv tsx src/clear-graph.ts"
   },
   "keywords": [],
   "author": "",
