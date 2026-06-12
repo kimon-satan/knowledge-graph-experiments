@@ -33,8 +33,9 @@ export async function createNodesAndRelations(result: ExtractionResult, paragrap
       if (paragraph) {
         await session.run(
           `MATCH (p:Paragraph {id: $pid}), (n:${entity.label} {id: $id})
-           MERGE (p)-[:HAS_ENTITY]->(n)`,
-          { pid: paragraph.id, id: entity.id },
+           MERGE (p)-[r:HAS_ENTITY]->(n)
+           ON CREATE SET r.sourceText = $sourceText`,
+          { pid: paragraph.id, id: entity.id, sourceText: entity.sourceText },
         );
       }
     }

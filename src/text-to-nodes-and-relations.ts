@@ -8,6 +8,7 @@ export type Entity = {
   label: NodeLabel;
   name: string;
   description: string;
+  sourceText: string[];
 };
 
 export type Relationship = {
@@ -49,6 +50,7 @@ Extract EVERY concept that is named or clearly implied. Be thorough with:
 Text: "Semi-structured interviews use a topic guide rather than a fixed script, giving the researcher flexibility to probe unexpected responses."
 
 Entities (8): semi-structured interview, topic guide, fixed script, researcher, flexibility, probing, unexpected response, structured interview [implied contrast]
+(For each entity, source_text is the verbatim sentence above it was drawn from, e.g. structured interview → ["Semi-structured interviews use a topic guide rather than a fixed script, giving the researcher flexibility to probe unexpected responses."])
 Relationships (9):
 - semi-structured interview USES topic guide  →  PART_OF
 - semi-structured interview RELATED_TO structured interview
@@ -64,7 +66,13 @@ Relationships (9):
 - Extract ALL relationships — every meaningful connection between entities you found
 - A single sentence typically yields 3–5 relationships
 - Use TYPE_OF, PART_OF, HAS_PROPERTY, WITHOUT_PROPERTY, SIMILAR_TO, RELATED_TO liberally
-- If an entity is mentioned multiple times, include it once`;
+- If an entity is mentioned multiple times, include it once
+
+== SOURCE TEXT RULES ==
+- For every entity, populate source_text with the verbatim sentence(s) from the input that name or imply it
+- Copy the sentence(s) EXACTLY as written — do not paraphrase, trim, or reword
+- For an implied contrast (e.g. "structured interview" implied by "unstructured"), cite the sentence that implied it
+- If multiple sentences mention the entity, include each of them`;
 
 const RESPONSE_SCHEMA = {
   type: "object",
@@ -78,8 +86,9 @@ const RESPONSE_SCHEMA = {
           label: { type: "string", enum: [...EXTRACTABLE_LABELS] },
           name: { type: "string" },
           description: { type: "string" },
+          source_text: { type: "array", items: { type: "string" } },
         },
-        required: ["id", "label", "name", "description"],
+        required: ["id", "label", "name", "description", "source_text"],
         additionalProperties: false,
       },
     },
@@ -116,7 +125,7 @@ export async function textToNodesAndRelations(text: string): Promise<ExtractionR
   });
 
   const raw = JSON.parse(response.choices[0].message.content!) as {
-    entities: Array<{ id: string; label: string; name: string; description: string }>;
+    entities: Array<{ id: string; label: string; name: string; description: string; source_text: string[] }>;
     relationships: Array<{ from_id: string; to_id: string; type: string }>;
   };
 
@@ -127,7 +136,7 @@ export async function textToNodesAndRelations(text: string): Promise<ExtractionR
   const entities: Entity[] = raw.entities.map((e) => {
     const id = normaliseId(e.label, e.name);
     idMap.set(e.id, id);
-    return { id, label: e.label as NodeLabel, name: e.name, description: e.description };
+    return { id, label: e.label as NodeLabel, name: e.name, description: e.description, sourceText: e.source_text };
   });
 
   const relationships: Relationship[] = raw.relationships.map((r) => ({
