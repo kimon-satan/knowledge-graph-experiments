@@ -53,7 +53,7 @@ Node labels and relationship types are the single source of truth in `src/labels
 
 Two labels/types are **structural** — created deterministically by code, never by the LLM:
 - `Paragraph` nodes are `MERGE`d once per source paragraph (or file, in the CLI), storing the full source `text`.
-- `HAS_ENTITY` relationships link each `Paragraph` to every entity extracted from it. Each edge carries a `sourceText` string-array property recording the verbatim source sentence(s) the entity was extracted from (returned per-entity by the LLM during extraction).
+- `EXTRACTED_FROM` relationships link each entity back to the `Paragraph` it was extracted from. Each edge carries a `sourceText` string-array property recording the verbatim source sentence(s) the entity was extracted from (returned per-entity by the LLM during extraction).
 
 `EXTRACTABLE_LABELS` and `EXTRACTABLE_REL_TYPES` (also in `labels.ts`) exclude these structural types and are what the extractor's system prompt and JSON schema expose to the model.
 
