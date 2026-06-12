@@ -1,10 +1,20 @@
 import { driver } from "./driver";
 import { ALLOWED_LABELS, ALLOWED_REL_TYPES } from "./labels";
 import type { ExtractionResult } from "./extract-graph";
+import type { Paragraph } from "./ingest-paragraphs";
 
-export async function loadGraph(result: ExtractionResult): Promise<void> {
+export async function loadGraph(result: ExtractionResult, paragraph?: Paragraph): Promise<void> {
   const session = driver.session();
   try {
+    if (paragraph) {
+      await session.run(
+        `MERGE (p:Paragraph {id: $id})
+         ON CREATE SET p.text = $text`,
+        { id: paragraph.id, text: paragraph.text },
+      );
+      console.log(`  MERGED paragraph [${paragraph.id}]`);
+    }
+
     for (const entity of result.entities) {
       if (!ALLOWED_LABELS.has(entity.label)) {
         console.warn(`Skipping entity with unknown label: ${entity.label}`);
@@ -19,6 +29,14 @@ export async function loadGraph(result: ExtractionResult): Promise<void> {
       );
       const wasCreated = entityResult.summary.counters.updates().nodesCreated > 0;
       console.log(`  ${wasCreated ? "CREATED" : "matched"} [${entity.label}] ${entity.name}`);
+
+      if (paragraph) {
+        await session.run(
+          `MATCH (p:Paragraph {id: $pid}), (n:${entity.label} {id: $id})
+           MERGE (p)-[:HAS_ENTITY]->(n)`,
+          { pid: paragraph.id, id: entity.id },
+        );
+      }
     }
 
     for (const rel of result.relationships) {

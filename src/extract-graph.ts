@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { NODE_LABELS, type NodeLabel, REL_TYPES, type RelType } from "./labels";
+import { EXTRACTABLE_LABELS, EXTRACTABLE_REL_TYPES, type NodeLabel, type RelType } from "./labels";
 
 const client = new OpenAI();
 
@@ -31,8 +31,8 @@ function normaliseId(label: string, name: string): string {
 
 const SYSTEM_PROMPT = `You are a knowledge graph extractor for educational content. Extract a DENSE graph — a typical paragraph should yield 8–15 entities and 10–20 relationships.
 
-Allowed entity labels: ${NODE_LABELS.join(", ")}
-Allowed relationship types: ${REL_TYPES.join(", ")}
+Allowed entity labels: ${EXTRACTABLE_LABELS.join(", ")}
+Allowed relationship types: ${EXTRACTABLE_REL_TYPES.join(", ")}
 
 ID format: <label_lowercase>_<name_as_snake_case>  e.g. "Open-ended interview" → concept_open_ended_interview
 
@@ -75,7 +75,7 @@ const RESPONSE_SCHEMA = {
         type: "object",
         properties: {
           id: { type: "string" },
-          label: { type: "string", enum: [...NODE_LABELS] },
+          label: { type: "string", enum: [...EXTRACTABLE_LABELS] },
           name: { type: "string" },
           description: { type: "string" },
         },
@@ -90,7 +90,7 @@ const RESPONSE_SCHEMA = {
         properties: {
           from_id: { type: "string" },
           to_id: { type: "string" },
-          type: { type: "string", enum: [...REL_TYPES] },
+          type: { type: "string", enum: [...EXTRACTABLE_REL_TYPES] },
         },
         required: ["from_id", "to_id", "type"],
         additionalProperties: false,

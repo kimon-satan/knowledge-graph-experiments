@@ -37,3 +37,10 @@ export const REL_TYPES = [
 export type RelType = (typeof REL_TYPES)[number];
 
 export const ALLOWED_REL_TYPES = new Set<string>(REL_TYPES);
+
+// Structural — created by code, never by the LLM:
+//   Paragraph nodes are MERGEd per source paragraph; HAS_ENTITY links each
+//   extracted entity back to its paragraph. Excluded from the extractor's vocabulary
+//   so the model focuses only on real domain entities and relationships.
+export const EXTRACTABLE_LABELS = NODE_LABELS.filter((l) => l !== "Paragraph");
+export const EXTRACTABLE_REL_TYPES = REL_TYPES.filter((t) => t !== "HAS_ENTITY");

@@ -13,7 +13,7 @@ export async function ingestParagraphs(paragraphs: Paragraph[]): Promise<void> {
   for (const paragraph of paragraphs) {
     console.log(`Processing paragraph ${paragraph.id}...`);
     const result = await extractGraph(paragraph.text);
-    await loadGraph(result);
+    await loadGraph(result, paragraph);
     console.log(`  → ${result.entities.length} entities, ${result.relationships.length} relationships`);
   }
 

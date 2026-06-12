@@ -51,6 +51,12 @@ Takes a text file and a `--steps` flag:
 
 Node labels and relationship types are the single source of truth in `src/labels.ts`. Both `extractGraph` (via the LLM system prompt and JSON schema) and `loadGraph` (via allowlist validation) derive from this file. Adding a new label or relationship type requires updating only `labels.ts`.
 
+Two labels/types are **structural** — created deterministically by code, never by the LLM:
+- `Paragraph` nodes are `MERGE`d once per source paragraph (or file, in the CLI), storing the full source `text`.
+- `HAS_ENTITY` relationships link each `Paragraph` to every entity extracted from it.
+
+`EXTRACTABLE_LABELS` and `EXTRACTABLE_REL_TYPES` (also in `labels.ts`) exclude these structural types and are what the extractor's system prompt and JSON schema expose to the model.
+
 Entity IDs are re-derived deterministically from `label + name` after the LLM responds (`normaliseId` in `extract-graph.ts`), so model-hallucinated IDs are discarded. Known limitation: the same real-world entity named differently across calls (e.g. "Turing" vs "Alan Turing") will become two separate nodes.
 
 `loadGraph` uses `MERGE` with `ON CREATE SET`, meaning re-running the same data won't overwrite existing nodes — safe to re-ingest.
