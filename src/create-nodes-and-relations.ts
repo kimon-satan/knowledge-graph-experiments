@@ -49,10 +49,14 @@ export async function createNodesAndRelations(result: ExtractionResult, paragrap
       // The type is validated above before being interpolated — this is not a
       // SQL-injection-style risk because the value never reaches a string parser;
       // Neo4j compiles the query with the type baked in as a structural token.
+      // ON CREATE SET only fires for a newly created edge. A repeated extraction of
+      // the same relationship matches the existing edge, so its elaboration is kept
+      // and the repeat is discarded.
       await session.run(
         `MATCH (a {id: $fromId}), (b {id: $toId})
-         MERGE (a)-[:${type}]->(b)`,
-        { fromId: rel.fromId, toId: rel.toId },
+         MERGE (a)-[r:${type}]->(b)
+         ON CREATE SET r.elaboration = $elaboration`,
+        { fromId: rel.fromId, toId: rel.toId, elaboration: rel.elaboration },
       );
     }
   } finally {
