@@ -101,7 +101,7 @@ const RESPONSE_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-export async function extractGraph(text: string): Promise<ExtractionResult> {
+export async function textToNodesAndRelations(text: string): Promise<ExtractionResult> {
   const response = await client.chat.completions.create({
     model: "gpt-4o",
     temperature: 0.3,

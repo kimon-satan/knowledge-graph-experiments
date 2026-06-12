@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { basename, extname } from "node:path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { extractGraph } from "../extract-graph";
-import { loadGraph } from "../load-graph";
+import { textToNodesAndRelations } from "../text-to-nodes-and-relations";
+import { createNodesAndRelations } from "../create-nodes-and-relations";
 import { createConstraints } from "../create-constraints";
 import { ingestParagraphs, type Paragraph } from "../ingest-paragraphs";
 import { driver } from "../driver";
@@ -59,7 +59,7 @@ if (paragraphs) {
   } else {
     // extract+ingest: dry run — just print counts per paragraph
     for (const paragraph of paragraphs) {
-      const result = await extractGraph(paragraph.text);
+      const result = await textToNodesAndRelations(paragraph.text);
       console.log(`[${paragraph.id}] ${result.entities.length} entities, ${result.relationships.length} relationships`);
     }
   }
@@ -69,7 +69,7 @@ if (paragraphs) {
 }
 
 // Plain text file — single LLM call, single Paragraph node
-const result = await extractGraph(raw);
+const result = await textToNodesAndRelations(raw);
 
 if (argv.steps === "extract") {
   console.log(JSON.stringify(result, null, 2));
@@ -83,7 +83,7 @@ if (argv.steps === "extract+ingest" || argv.steps === "extract+ingest+load") {
 if (argv.steps === "extract+ingest+load") {
   const paragraphId = basename(argv.file, extname(argv.file));
   await createConstraints();
-  await loadGraph(result, { id: paragraphId, text: raw });
+  await createNodesAndRelations(result, { id: paragraphId, text: raw });
   await driver.close();
   console.log("Loaded into Neo4j.");
 }

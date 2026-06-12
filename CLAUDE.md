@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm lint                        # ESLint
 pnpm format                      # Prettier
 
-pnpm test:extract                # Run extract-graph test (hits OpenAI)
+pnpm test:extract                # Run text-to-nodes-and-relations test (hits OpenAI)
 pnpm test:load                   # Run load-graph test (hits Neo4j)
 pnpm test:ingest                 # Run ingest-paragraph test (hits both)
 
@@ -35,10 +35,10 @@ This project builds a knowledge graph from educational text by:
 ### Pipeline
 
 ```
-text → extractGraph() → ExtractionResult → loadGraph() → Neo4j
+text → textToNodesAndRelations() → ExtractionResult → createNodesAndRelations() → Neo4j
 ```
 
-`ingestParagraphs()` is a convenience wrapper that runs `createConstraints` + the loop of `extractGraph` + `loadGraph` over a `Paragraph[]` array.
+`ingestParagraphs()` is a convenience wrapper that runs `createConstraints` + the loop of `textToNodesAndRelations` + `createNodesAndRelations` over a `Paragraph[]` array.
 
 ### CLI (`src/cli/kg-cli.ts`)
 
@@ -49,7 +49,7 @@ Takes a text file and a `--steps` flag:
 
 ### Schema
 
-Node labels and relationship types are the single source of truth in `src/labels.ts`. Both `extractGraph` (via the LLM system prompt and JSON schema) and `loadGraph` (via allowlist validation) derive from this file. Adding a new label or relationship type requires updating only `labels.ts`.
+Node labels and relationship types are the single source of truth in `src/labels.ts`. Both `textToNodesAndRelations` (via the LLM system prompt and JSON schema) and `createNodesAndRelations` (via allowlist validation) derive from this file. Adding a new label or relationship type requires updating only `labels.ts`.
 
 Two labels/types are **structural** — created deterministically by code, never by the LLM:
 - `Paragraph` nodes are `MERGE`d once per source paragraph (or file, in the CLI), storing the full source `text`.
@@ -57,9 +57,9 @@ Two labels/types are **structural** — created deterministically by code, never
 
 `EXTRACTABLE_LABELS` and `EXTRACTABLE_REL_TYPES` (also in `labels.ts`) exclude these structural types and are what the extractor's system prompt and JSON schema expose to the model.
 
-Entity IDs are re-derived deterministically from `label + name` after the LLM responds (`normaliseId` in `extract-graph.ts`), so model-hallucinated IDs are discarded. Known limitation: the same real-world entity named differently across calls (e.g. "Turing" vs "Alan Turing") will become two separate nodes.
+Entity IDs are re-derived deterministically from `label + name` after the LLM responds (`normaliseId` in `text-to-nodes-and-relations.ts`), so model-hallucinated IDs are discarded. Known limitation: the same real-world entity named differently across calls (e.g. "Turing" vs "Alan Turing") will become two separate nodes.
 
-`loadGraph` uses `MERGE` with `ON CREATE SET`, meaning re-running the same data won't overwrite existing nodes — safe to re-ingest.
+`createNodesAndRelations` uses `MERGE` with `ON CREATE SET`, meaning re-running the same data won't overwrite existing nodes — safe to re-ingest.
 
 ### Input format for `ingestParagraphs`
 

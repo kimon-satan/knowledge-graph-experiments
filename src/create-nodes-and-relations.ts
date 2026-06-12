@@ -1,9 +1,9 @@
 import { driver } from "./driver";
 import { ALLOWED_LABELS, ALLOWED_REL_TYPES } from "./labels";
-import type { ExtractionResult } from "./extract-graph";
+import type { ExtractionResult } from "./text-to-nodes-and-relations";
 import type { Paragraph } from "./ingest-paragraphs";
 
-export async function loadGraph(result: ExtractionResult, paragraph?: Paragraph): Promise<void> {
+export async function createNodesAndRelations(result: ExtractionResult, paragraph?: Paragraph): Promise<void> {
   const session = driver.session();
   try {
     if (paragraph) {

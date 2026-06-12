@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "eslint src",
     "format": "prettier --write src",
-    "test:extract": "dotenv tsx src/tests/test-extract-graph.ts",
-    "test:load": "dotenv tsx src/tests/test-load-graph.ts",
+    "test:extract": "dotenv tsx src/tests/test-text-to-nodes-and-relations.ts",
+    "test:load": "dotenv tsx src/tests/test-create-nodes-and-relations.ts",
     "test:ingest": "dotenv tsx src/tests/test-ingest-paragraph.ts",
     "kg-cli": "dotenv tsx src/cli/kg-cli.ts",
     "clear-graph": "dotenv tsx src/clear-graph.ts"

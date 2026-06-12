@@ -1,6 +1,6 @@
 import { createConstraints } from "./create-constraints";
-import { extractGraph } from "./extract-graph";
-import { loadGraph } from "./load-graph";
+import { textToNodesAndRelations } from "./text-to-nodes-and-relations";
+import { createNodesAndRelations } from "./create-nodes-and-relations";
 
 export type Paragraph = {
   id: string;
@@ -12,8 +12,8 @@ export async function ingestParagraphs(paragraphs: Paragraph[]): Promise<void> {
 
   for (const paragraph of paragraphs) {
     console.log(`Processing paragraph ${paragraph.id}...`);
-    const result = await extractGraph(paragraph.text);
-    await loadGraph(result, paragraph);
+    const result = await textToNodesAndRelations(paragraph.text);
+    await createNodesAndRelations(result, paragraph);
     console.log(`  → ${result.entities.length} entities, ${result.relationships.length} relationships`);
   }
 
