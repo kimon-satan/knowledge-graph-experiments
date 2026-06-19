@@ -14,7 +14,9 @@ export async function ingestParagraphs(paragraphs: Paragraph[]): Promise<void> {
     console.log(`Processing paragraph ${paragraph.id}...`);
     const result = await textToNodesAndRelations(paragraph.text);
     await createNodesAndRelations(result, paragraph);
-    console.log(`  → ${result.entities.length} entities, ${result.relationships.length} relationships`);
+    console.log(
+      `  → ${result.entities.length} entities, ${result.relationships.length} relationships`,
+    );
   }
 
   console.log(`\nDone. Processed ${paragraphs.length} paragraph(s).`);

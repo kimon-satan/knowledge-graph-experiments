@@ -10,7 +10,10 @@ import { driver } from "../driver";
 
 const argv = await yargs(hideBin(process.argv))
   .usage("Usage: $0 <file> [options]")
-  .command("$0 <file>", "Process a knowledge graph from a text or JSON paragraphs file")
+  .command(
+    "$0 <file>",
+    "Process a knowledge graph from a text or JSON paragraphs file",
+  )
   .positional("file", {
     describe: "Path to the input file (.json paragraphs file or plain text)",
     type: "string",
@@ -50,7 +53,9 @@ const paragraphs = parseParagraphsFile(raw);
 if (paragraphs) {
   // Multi-paragraph JSON file — one LLM call + one Paragraph node per paragraph
   if (argv.steps === "extract") {
-    console.error("--steps extract is not supported for paragraph JSON files; use extract+ingest or extract+ingest+load");
+    console.error(
+      "--steps extract is not supported for paragraph JSON files; use extract+ingest or extract+ingest+load",
+    );
     process.exit(1);
   }
 
@@ -60,7 +65,9 @@ if (paragraphs) {
     // extract+ingest: dry run — just print counts per paragraph
     for (const paragraph of paragraphs) {
       const result = await textToNodesAndRelations(paragraph.text);
-      console.log(`[${paragraph.id}] ${result.entities.length} entities, ${result.relationships.length} relationships`);
+      console.log(
+        `[${paragraph.id}] ${result.entities.length} entities, ${result.relationships.length} relationships`,
+      );
     }
   }
 
@@ -77,7 +84,9 @@ if (argv.steps === "extract") {
 }
 
 if (argv.steps === "extract+ingest" || argv.steps === "extract+ingest+load") {
-  console.log(`Extracted ${result.entities.length} entities, ${result.relationships.length} relationships`);
+  console.log(
+    `Extracted ${result.entities.length} entities, ${result.relationships.length} relationships`,
+  );
 }
 
 if (argv.steps === "extract+ingest+load") {

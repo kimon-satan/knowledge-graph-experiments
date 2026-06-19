@@ -1,5 +1,11 @@
 import OpenAI from "openai";
-import { EXTRACTABLE_LABELS, EXTRACTABLE_REL_TYPES, type NodeLabel, type RelType } from "./labels";
+import {
+  EXTRACTABLE_LABELS,
+  EXTRACTABLE_REL_TYPES,
+  type NodeLabel,
+  type RelType,
+} from "./labels.js";
+import { buildLabelPromptSection } from "./label-schema.js";
 
 const client = new OpenAI();
 
@@ -24,7 +30,10 @@ export type ExtractionResult = {
 };
 
 function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "");
 }
 
 function normaliseId(label: string, name: string): string {
@@ -33,7 +42,8 @@ function normaliseId(label: string, name: string): string {
 
 const SYSTEM_PROMPT = `You are a knowledge graph extractor for educational content. Extract a DENSE graph — a typical paragraph should yield 8–15 entities and 10–20 relationships.
 
-Allowed entity labels: ${EXTRACTABLE_LABELS.join(", ")}
+${buildLabelPromptSection()}
+
 Allowed relationship types: ${EXTRACTABLE_REL_TYPES.join(", ")}
 
 ID format: <label_lowercase>_<name_as_snake_case>  e.g. "Open-ended interview" → concept_open_ended_interview
@@ -116,13 +126,19 @@ const RESPONSE_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-export async function textToNodesAndRelations(text: string): Promise<ExtractionResult> {
+export async function textToNodesAndRelations(
+  text: string,
+): Promise<ExtractionResult> {
   const response = await client.chat.completions.create({
     model: "gpt-4o",
     temperature: 0.3,
     response_format: {
       type: "json_schema",
-      json_schema: { name: "knowledge_graph", strict: true, schema: RESPONSE_SCHEMA },
+      json_schema: {
+        name: "knowledge_graph",
+        strict: true,
+        schema: RESPONSE_SCHEMA,
+      },
     },
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
@@ -131,8 +147,19 @@ export async function textToNodesAndRelations(text: string): Promise<ExtractionR
   });
 
   const raw = JSON.parse(response.choices[0].message.content!) as {
-    entities: Array<{ id: string; label: string; name: string; description: string; source_text: string[] }>;
-    relationships: Array<{ from_id: string; to_id: string; type: string; elaboration: string }>;
+    entities: Array<{
+      id: string;
+      label: string;
+      name: string;
+      description: string;
+      source_text: string[];
+    }>;
+    relationships: Array<{
+      from_id: string;
+      to_id: string;
+      type: string;
+      elaboration: string;
+    }>;
   };
 
   // Re-derive IDs from label+name so they're deterministic regardless of what the model returned.
@@ -142,7 +169,13 @@ export async function textToNodesAndRelations(text: string): Promise<ExtractionR
   const entities: Entity[] = raw.entities.map((e) => {
     const id = normaliseId(e.label, e.name);
     idMap.set(e.id, id);
-    return { id, label: e.label as NodeLabel, name: e.name, description: e.description, sourceText: e.source_text };
+    return {
+      id,
+      label: e.label as NodeLabel,
+      name: e.name,
+      description: e.description,
+      sourceText: e.source_text,
+    };
   });
 
   const relationships: Relationship[] = raw.relationships.map((r) => ({

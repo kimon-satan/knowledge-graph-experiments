@@ -3,7 +3,10 @@ import { ALLOWED_LABELS, ALLOWED_REL_TYPES } from "./labels";
 import type { ExtractionResult } from "./text-to-nodes-and-relations";
 import type { Paragraph } from "./ingest-paragraphs";
 
-export async function createNodesAndRelations(result: ExtractionResult, paragraph?: Paragraph): Promise<void> {
+export async function createNodesAndRelations(
+  result: ExtractionResult,
+  paragraph?: Paragraph,
+): Promise<void> {
   const session = driver.session();
   try {
     if (paragraph) {
@@ -27,8 +30,11 @@ export async function createNodesAndRelations(result: ExtractionResult, paragrap
          ON CREATE SET n.name = $name, n.description = $description`,
         { id: entity.id, name: entity.name, description: entity.description },
       );
-      const wasCreated = entityResult.summary.counters.updates().nodesCreated > 0;
-      console.log(`  ${wasCreated ? "CREATED" : "matched"} [${entity.label}] ${entity.name}`);
+      const wasCreated =
+        entityResult.summary.counters.updates().nodesCreated > 0;
+      console.log(
+        `  ${wasCreated ? "CREATED" : "matched"} [${entity.label}] ${entity.name}`,
+      );
 
       if (paragraph) {
         await session.run(

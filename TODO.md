@@ -1,0 +1,5 @@
+- Improve node descriptions not to be direct quotes from the text
+- Mergeable nodes pass
+- Improve relationships pass
+- Human intervention pass
+- Supplementary layers
