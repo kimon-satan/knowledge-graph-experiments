@@ -72,11 +72,21 @@ Relationships (11) — each with an elaboration explaining the connection:
 - flexibility DETERMINES unexpected response  →  "The flexibility of format is what makes unexpected responses possible — a rigid script forecloses them."
 - topic guide USED_FOR researcher  →  "Researchers use the topic guide as their primary instrument to steer the conversation."
 
+== RELATIONSHIP DIRECTION ==
+Direction follows semantic roles, not sentence grammar. The grammatical subject is often the topic being described — which is frequently B (the thing affected, typed, or composed), not A (the cause, type, or component). For every relationship ask: "Which entity fits the A slot in the definition?" — not "What is the sentence about?"
+
+Causal example — "Crops fail when there is a drought."
+  Wrong: crops AFFECTS drought   (crops is the sentence subject but not the cause)
+  Right: drought AFFECTS crops   (drought is the cause; crops is the effect)
+
+Compositional example — "The field of statistics includes probability theory."
+  Wrong: statistics PART_OF probability theory   (statistics is the sentence subject but it is the whole)
+  Right: probability theory PART_OF statistics   (probability theory is the component; statistics is the whole)
+
 == RELATIONSHIP RULES ==
 - Extract ALL relationships — every meaningful connection between entities you found
 - A single sentence typically yields 3–5 relationships
 - Use TYPE_OF, PART_OF, HAS_PROPERTY, WITHOUT_PROPERTY, SIMILAR_TO liberally
-- AFFECTS, RESULTS_IN, DETERMINES always go cause → effect: A is what does the influencing, B is what changes. Wrong: "Quicksort AFFECTS poor pivot choice". Right: "poor pivot choice AFFECTS Quicksort performance".
 - Prefer DETERMINES over AFFECTS when A is structurally necessary for B, not merely influential
 - Prefer RESULTS_IN over AFFECTS when there is a discrete causal outcome rather than sustained influence
 - SIMILAR_TO and ANALOGOUS_TO are symmetric — direction does not matter, pick the subject most naturally stated first
