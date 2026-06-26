@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { EXTRACTABLE_LABELS, type NodeLabel } from "./node-labels.js";
 import { EXTRACTABLE_REL_TYPES, type RelType } from "./rel-labels.js";
 import { buildLabelPromptSection } from "./node-label-schema.js";
+import { buildRelPromptSection } from "./rel-label-schema.js";
 
 const client = new OpenAI();
 
@@ -40,7 +41,7 @@ const SYSTEM_PROMPT = `You are a knowledge graph extractor for educational conte
 
 ${buildLabelPromptSection()}
 
-Allowed relationship types: ${EXTRACTABLE_REL_TYPES.join(", ")}
+${buildRelPromptSection()}
 
 ID format: <label_lowercase>_<name_as_snake_case>  e.g. "Open-ended interview" → concept_open_ended_interview
 
@@ -54,22 +55,32 @@ Extract EVERY concept that is named or clearly implied. Be thorough with:
 
 == EXAMPLE ==
 
-Text: "Semi-structured interviews use a topic guide rather than a fixed script, giving the researcher flexibility to probe unexpected responses."
+Text: "Semi-structured interviews use a topic guide rather than a fixed script, giving the researcher flexibility to probe unexpected responses. Response rates are a measure of data quality."
 
-Entities (8): semi-structured interview, topic guide, fixed script, researcher, flexibility, probing, unexpected response, structured interview [implied contrast]
-(For each entity, source_text is the verbatim sentence above it was drawn from, e.g. structured interview → ["Semi-structured interviews use a topic guide rather than a fixed script, giving the researcher flexibility to probe unexpected responses."])
-Relationships (9) — each with an elaboration explaining the connection:
+Entities (10): semi-structured interview, topic guide, fixed script, researcher, flexibility, probing, unexpected response, structured interview [implied contrast], response rate, data quality
+(For each entity, source_text is the verbatim sentence above it was drawn from.)
+Relationships (11) — each with an elaboration explaining the connection:
 - topic guide PART_OF semi-structured interview  →  "The topic guide is the backbone of the interview, listing themes to cover while leaving room to deviate."
 - semi-structured interview WITHOUT_PROPERTY fixed script  →  "Unlike a structured interview, it deliberately avoids a rigid script so questions can adapt to each respondent."
 - semi-structured interview HAS_PROPERTY flexibility  →  "Because the order and wording of questions aren't fixed, the researcher can follow interesting tangents as they arise."
 - semi-structured interview FACILITATES probing  →  "The loose format leaves space for follow-up questions, e.g. asking 'why do you think that?' after an unexpected answer."
-- probing FACILITATES unexpected response  →  "Probing surfaces detail the researcher hadn't anticipated, such as a motivation the original question didn't ask about."
+- probing RESULTS_IN unexpected response  →  "Follow-up probes are specifically designed to surface responses the researcher had not anticipated."
 - topic guide SIMILAR_TO fixed script  →  "Both steer the conversation, but a topic guide lists themes whereas a fixed script dictates exact wording."
+- semi-structured interview ANALOGOUS_TO qualitative survey  →  "Both gather open-ended responses through a set of prompts, with the same underlying question-answer structure."
+- structured interview TYPE_OF interview method  →  "A structured interview is one variant within the broader family of interview methods."
+- response rate MEASURE_OF data quality  →  "Response rate is a standard quantitative indicator used to assess whether a dataset is representative."
+- flexibility DETERMINES unexpected response  →  "The flexibility of format is what makes unexpected responses possible — a rigid script forecloses them."
+- topic guide USED_FOR researcher  →  "Researchers use the topic guide as their primary instrument to steer the conversation."
 
 == RELATIONSHIP RULES ==
 - Extract ALL relationships — every meaningful connection between entities you found
 - A single sentence typically yields 3–5 relationships
 - Use TYPE_OF, PART_OF, HAS_PROPERTY, WITHOUT_PROPERTY, SIMILAR_TO liberally
+- AFFECTS, RESULTS_IN, DETERMINES always go cause → effect: A is what does the influencing, B is what changes. Wrong: "Quicksort AFFECTS poor pivot choice". Right: "poor pivot choice AFFECTS Quicksort performance".
+- Prefer DETERMINES over AFFECTS when A is structurally necessary for B, not merely influential
+- Prefer RESULTS_IN over AFFECTS when there is a discrete causal outcome rather than sustained influence
+- SIMILAR_TO and ANALOGOUS_TO are symmetric — direction does not matter, pick the subject most naturally stated first
+- HAS_PROPERTY and WITHOUT_PROPERTY targets must be Property nodes; MEASURE_OF source must be a Measure node
 - If an entity is mentioned multiple times, include it once
 
 == ELABORATION RULES ==
