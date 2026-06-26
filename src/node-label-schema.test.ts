@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { resolveLabelClash, buildLabelPromptSection } from "./label-schema.js";
+import { resolveLabelClash, buildLabelPromptSection } from "./node-label-schema.js";
 import {
   NODE_LABEL_DEFS,
   LABEL_CLASH_RULES,
   EXTRACTABLE_LABELS,
   type LabelDef,
-} from "./labels.js";
-import type { NodeLabel } from "./labels.js";
+} from "./node-labels.js";
+import type { NodeLabel } from "./node-labels.js";
 
 describe("resolveLabelClash — settled decisions", () => {
   it("System beats Topic (higher specificity, no override)", () => {

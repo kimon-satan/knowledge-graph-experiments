@@ -3,7 +3,7 @@ import {
   NODE_LABEL_DEFS,
   type LabelDef,
   type NodeLabel,
-} from "./labels.js";
+} from "./node-labels.js";
 
 export function resolveLabelClash(a: NodeLabel, b: NodeLabel): NodeLabel {
   // 1. Check for an explicit pairwise override.

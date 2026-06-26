@@ -6,7 +6,7 @@ import {
   EXTRACTABLE_LABELS,
   ALLOWED_LABELS,
   type LabelDef,
-} from "./labels.js";
+} from "./node-labels.js";
 
 describe("NODE_LABEL_DEFS", () => {
   it("contains exactly the 7 extractable labels plus Paragraph", () => {

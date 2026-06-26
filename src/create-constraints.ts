@@ -1,8 +1,8 @@
 import { driver } from "./driver";
-import { NODE_LABELS } from "./labels";
+import { NODE_LABELS } from "./node-labels";
 
-export { NODE_LABELS } from "./labels";
-export type { NodeLabel } from "./labels";
+export { NODE_LABELS } from "./node-labels";
+export type { NodeLabel } from "./node-labels";
 
 export async function createConstraints() {
   const session = driver.session();

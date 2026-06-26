@@ -176,7 +176,7 @@ export const LABEL_CLASH_RULES: ClashRule[] = [
   },
 ];
 
-// --- Derived exports (backward-compatible — all existing consumers unchanged) ---
+// --- Derived exports ---
 
 export type NodeLabel = (typeof NODE_LABEL_DEFS)[number]["name"];
 
@@ -190,37 +190,3 @@ export const ALLOWED_LABELS = new Set<string>(NODE_LABELS);
 export const EXTRACTABLE_LABELS = (NODE_LABEL_DEFS as readonly LabelDef[])
   .filter((d) => !d.structural)
   .map((d) => d.name);
-
-// --- Relationship types (unchanged this pass) ---
-
-export const REL_TYPES = [
-  "AFFECTED_BY",
-  "AFFECTS",
-  "CREATED_BY",
-  "PART_OF",
-  "RESULT_OF",
-  "RESULTS_IN",
-  "FACILITATES",
-  "PROCESSED_BY",
-  "CONTAINS",
-  "COMPOSED_OF",
-  "HAS_PROPERTY",
-  "WITHOUT_PROPERTY",
-  "SIMILAR_TO",
-  "TYPE_OF",
-  "ANALOGOUS_TO",
-  "EXAMPLE_OF",
-  "EXTRACTED_FROM",
-] as const;
-
-export type RelType = (typeof REL_TYPES)[number];
-
-export const ALLOWED_REL_TYPES = new Set<string>(REL_TYPES);
-
-// Structural — created by code, never by the LLM:
-//   Paragraph nodes are MERGEd per source paragraph; EXTRACTED_FROM links each
-//   extracted entity back to its paragraph. Excluded from the extractor's vocabulary
-//   so the model focuses only on real domain entities and relationships.
-export const EXTRACTABLE_REL_TYPES = REL_TYPES.filter(
-  (t) => t !== "EXTRACTED_FROM",
-);

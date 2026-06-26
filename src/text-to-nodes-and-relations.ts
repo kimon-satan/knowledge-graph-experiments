@@ -1,11 +1,7 @@
 import OpenAI from "openai";
-import {
-  EXTRACTABLE_LABELS,
-  EXTRACTABLE_REL_TYPES,
-  type NodeLabel,
-  type RelType,
-} from "./labels.js";
-import { buildLabelPromptSection } from "./label-schema.js";
+import { EXTRACTABLE_LABELS, type NodeLabel } from "./node-labels.js";
+import { EXTRACTABLE_REL_TYPES, type RelType } from "./rel-labels.js";
+import { buildLabelPromptSection } from "./node-label-schema.js";
 
 const client = new OpenAI();
 

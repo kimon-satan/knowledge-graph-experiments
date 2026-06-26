@@ -1,5 +1,6 @@
 import { driver } from "./driver";
-import { ALLOWED_LABELS, ALLOWED_REL_TYPES } from "./labels";
+import { ALLOWED_LABELS } from "./node-labels";
+import { ALLOWED_REL_TYPES } from "./rel-labels";
 import type { ExtractionResult } from "./text-to-nodes-and-relations";
 import type { Paragraph } from "./ingest-paragraphs";
 
