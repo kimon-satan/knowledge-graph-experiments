@@ -53,6 +53,8 @@ Extract EVERY concept that is named or clearly implied. Be thorough with:
 - Properties and qualities used to describe things (e.g. "exploratory", "depth")
 - Implied contrasts: if the text says "unstructured", also extract "structured interview" as an implied concept
 
+Context-qualify entity names when the same operation or concept behaves differently in different systems. If two systems share an operation name but that operation has different properties in each, extract "system-A operation" and "system-B operation" as separate nodes rather than a single generic node that would inherit contradictory properties from both.
+
 == EXAMPLE ==
 
 Text: "Semi-structured interviews use a topic guide rather than a fixed script, giving the researcher flexibility to probe unexpected responses. Response rates are a measure of data quality."
@@ -147,8 +149,7 @@ export async function textToNodesAndRelations(
   text: string,
 ): Promise<ExtractionResult> {
   const response = await client.chat.completions.create({
-    model: "gpt-4o",
-    temperature: 0.3,
+    model: "o4-mini",
     response_format: {
       type: "json_schema",
       json_schema: {

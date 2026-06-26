@@ -61,6 +61,10 @@ Entity IDs are re-derived deterministically from `label + name` after the LLM re
 
 `createNodesAndRelations` uses `MERGE` with `ON CREATE SET`, meaning re-running the same data won't overwrite existing nodes — safe to re-ingest.
 
+### Prompt authoring rule
+
+Examples inside the LLM system prompt (`src/text-to-nodes-and-relations.ts`) must be domain-neutral — they must not reference any of the source texts being ingested (algorithms, economics, research methods, etc.). Use abstract placeholders or clearly unrelated everyday domains (weather, cooking, geography) so the model cannot overfit its extraction behaviour to the example domain.
+
 ### Input format for `ingestParagraphs`
 
 Validated against `schema/paragraphs.schema.json`: an object with a `paragraphs` array, each item having `id` (string) and `text` (string). Sample inputs live in `input/`.
